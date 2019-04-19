@@ -25,6 +25,6 @@ class graph {
 		GRAPH Initialize(int v, int e);
 		void InsertEdge(GRAPH &G, int u, int v, int w);
 		void PrintGraph(GRAPH G);
-		void remove(GRAPH &G);
+		void reset(GRAPH &G);
 };
 

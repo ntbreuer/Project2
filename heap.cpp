@@ -64,18 +64,20 @@ void heap::MinHeapify(ELEMENT A[], int i, int n) {
 
 // places the Contents of G into heap to form a min-heap
 HEAP heap::Initialize(GRAPH &G, int sourceNode) {
-	int size = G.v;
-	ELEMENT *h = new ELEMENT[size];
-	for (int i = 1; i <= size; i++) {
-		h[i].node = G.H[i].node;
-		h[i].d = 999;
-		h[i].p = 0;
+	HEAP *heapPtr = new HEAP;
+	heapPtr->size = G.v;
+	heapPtr->capacity = G.v;
+	heapPtr->H = new ELEMENT[G.v + 1];
+	for (int i = 1; i <= G.v; i++) {
+		heapPtr->H[i].node = G.H[i].node;
+		heapPtr->H[i].d = 999;
+		heapPtr->H[i].p = 0;
 	}
-	HEAP heap = { size, size, h };
-	h[sourceNode].d = 0;
+	heapPtr->H[sourceNode].d = 0;
 	G.H[sourceNode].d = 0;
-	DecreaseKey(heap, sourceNode, 0);
-	return heap;
+	DecreaseKey(*heapPtr, sourceNode, 0);
+
+	return *heapPtr;
 }
 
 // extracts min element from heap

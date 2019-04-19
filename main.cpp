@@ -3,13 +3,14 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <string>
 #include "main.h"
 #include "heap.h"
 
 
 /**
-* This program provides its user with an interface which modify and read a heap data struction
-* 3/8/19
+* This program finds the shortest path through a graph using dijkstra's shortest path algorithm
+* 4/8/19
 * Nic Breuer
 */
 
@@ -55,6 +56,7 @@ GRAPH inputGraph() {
 
 void Dijkstra(GRAPH &G) {
 	// get source and destination node value
+
 	int sourceNode = -1; int destination = -1; int flag = -1;
 
 	util_c.DCommand(&sourceNode, &destination, &flag);
@@ -70,6 +72,7 @@ void Dijkstra(GRAPH &G) {
 
 	// ---------STEP 1--------
 	// CREATE MIN HEAP (USING DISTANCE AS THE VALUE) OF SIZE v AND INIT SOURCE d TO 0
+	G = inputGraph();
 	HEAP tempHeap = heap_c.Initialize(G, sourceNode);
 
 	// ---------STEP 2--------
@@ -86,17 +89,17 @@ void Dijkstra(GRAPH &G) {
 			//   IS THE WEIGHT OF THE EDGE BETWEEN u AND v (PULLED FROM ADJ LIST)
 			//   IF TRUE, SET THE NEIGHBOR NODE'S DISTANCE TO (w + u.d) AND THE NEIGHBOR'S PREVIOUS NODE TO u;
 
-			cout << "u: " << u.node << endl;
-			cout << "u.d: " << u.d << endl;
-			ELEMENT* v = &G.H[TempList->neighbor]; cout << "\nv: " << TempList->neighbor << endl;//get neighbor (v)
-			int w = TempList->weight; cout << "u->v w: " << w << endl; //get weight (u->v)
+			//cout << "u: " << u.node << endl;
+			//cout << "u.d: " << u.d << endl;
+			ELEMENT* v = &G.H[TempList->neighbor]; //cout << "\nv: " << TempList->neighbor << endl;//get neighbor (v)
+			int w = TempList->weight; //cout << "u->v w: " << w << endl; //get weight (u->v)
 
 			for (int i = 1; i <= tempHeap.size; i++) { //If neighbor still exists in heap 
 				if (v->node == tempHeap.H[i].node) {
 					// perform relax
 					if (v->d > w + u.d) { //if its distance is larger than u->p + u.d
-						v->p = u.node; cout << v->node << ".p =" << u.node << endl; //set neighbors previous node to u
-						v->d = w + u.d; cout << v->node << ".d =" << w + u.d << endl;//set neighbor distance to w + u.d
+						v->p = u.node; //cout << v->node << ".p =" << u.node << endl; //set neighbors previous node to u
+						v->d = w + u.d; //cout << v->node << ".d =" << w + u.d << endl;//set neighbor distance to w + u.d
 						tempHeap.H[i].d = v->d; //update heap values as well
 						tempHeap.H[i].p = v->p;
 						heap_c.DecreaseKey(tempHeap, i, v->d); //decrease key of heap distance to ensure min heap
@@ -106,7 +109,7 @@ void Dijkstra(GRAPH &G) {
 			}
 			TempList = TempList->next;
 		}
-		graph_c.PrintGraph(G);
+		//graph_c.PrintGraph(G);
 	}
 	
 	// print path
@@ -122,7 +125,7 @@ void Dijkstra(GRAPH &G) {
 	else {
 		cout << "\n";
 		if (tempElement.d == 999) {
-			cout << "\nNo path available";
+			cout << "No path available";
 		}
 		else {
 			while (tempElement.node != sourceNode) {

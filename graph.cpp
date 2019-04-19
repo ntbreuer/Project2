@@ -13,22 +13,26 @@ using namespace std;
 // INITIALIZE GRAPH
 GRAPH graph::Initialize(int v, int e) {
 
+	GRAPH *graph = new GRAPH;
+
+	graph->v = v;
+	graph->e = e;
+
 	//INITIALIZE LISTS
-	LIST **a = new LIST *[v+1]; //dynamic allocation of v pointers to LISTS
+	graph->A = new LIST *[v+1]; //dynamic allocation of v pointers to LISTS
 	for (int i = 0; i <= v; i++) {
-		a[i] = NULL; // initialize every list pointer to null
+		graph->A[i] = NULL; // initialize every list pointer to null
 	}
 
 	//INITIALIZE ELEMENTS
-	ELEMENT *h = new ELEMENT[v+1];
+	graph->H = new ELEMENT[v+1];
 	for (int i = 0; i <= v; i++) {
-		h[i].node = i; //Add node index(i) to element i
-		h[i].d = 999; //source -> node distance initialized to null
-		h[i].p = 0; //previous node initialized to null
+		graph->H[i].node = i; //Add node index(i) to element i
+		graph->H[i].d = 999; //source -> node distance initialized to null
+		graph->H[i].p = 0; //previous node initialized to null
 	}
 
-	GRAPH graph = { v, e, h , a}; //create graph
-	return graph;
+	return *graph;
 }
 
 // ADD EDGE BY ADJUSTING ADJ LISTS
@@ -61,8 +65,8 @@ void graph::PrintGraph(GRAPH G) {
 	// PRINT ADJ LISTS OF NODES
 	for (int i = 1; i <= G.v; i++) {
 		cout << G.H[i].node << ": "; // print node
-		cout << G.H[i].d << " : ";
-		cout << G.H[i].p << " : ";
+		//cout << G.H[i].d << " : ";
+		//cout << G.H[i].p << " : ";
 		LIST *L = NULL;
 		if (G.A[i] != NULL) { //if adj list exists for that node
 			L = G.A[i];
@@ -74,6 +78,13 @@ void graph::PrintGraph(GRAPH G) {
 			}
 		}
 		cout << "\n";
+	}
+}
+
+void graph::reset(GRAPH &G) {
+	for (int i = 1; i <= G.v; i++) {
+		G.H[i].d = 99999;
+		G.H[i].p = 0;
 	}
 }
 
