@@ -4,7 +4,7 @@
 
 /**
 * Utility class providing interface functionality
-* 3/8/19
+* 4/11/19
 * Nic Breuer
 */
 
@@ -13,7 +13,7 @@ char util::nextCommand()
 {
 	char c;
 	while (1) {
-		scanf_s("%c", &c);
+		scanf("%c", &c);
 		if (c == ' ' || c == '\n' || c == '\t') {
 			continue;
 		}
@@ -27,6 +27,6 @@ char util::nextCommand()
 
 void util::DCommand(int *s, int *t, int *f)
 {
-	scanf_s("%d", s); scanf_s("%d", t); scanf_s("%d", f);
+	scanf("%d", s); scanf("%d", t); scanf("%d", f);
 }
 

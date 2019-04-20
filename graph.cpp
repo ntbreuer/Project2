@@ -83,40 +83,7 @@ void graph::PrintGraph(GRAPH G) {
 
 void graph::reset(GRAPH &G) {
 	for (int i = 1; i <= G.v; i++) {
-		G.H[i].d = 99999;
+		G.H[i].d = 999;
 		G.H[i].p = 0;
 	}
 }
-
-
-/*
-
-graph::Weight(ELEMENT u, ELEMENT v) {
-
-}
-
-graph::Relax(ELEMENT u, ELEMENT v) {
-	int w = graph::Weight(u, v);
-	if (v.d > u.d + w) {
-		v.d = u.d + w;
-	}
-	else {
-		v.p = u;
-	}
-}
-
-void graph::Initialize(GRAPH &G, ELEMENT source) {
-	for (int i = 1; i < G.v; i++) {
-		G.H[i].node = i;
-		G.H[i].d = NULL;
-		G.H[i].p = NULL;
-	}
-	source.d = 0;
-}
-
-graph::dijkstra(Graph G, int weight, ELEMENT source) {
-	graph::InitSingleSource(G, source);
-	
-}
-
-*/

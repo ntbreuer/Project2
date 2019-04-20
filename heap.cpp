@@ -5,7 +5,7 @@ using namespace std;
 
 /**
 * Heap class providing the functionality of a heap data structure
-* 3/8/19
+* 4/11/19
 * Nic Breuer
 */
 

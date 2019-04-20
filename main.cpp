@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include "main.h"
 #include "heap.h"
@@ -10,7 +11,7 @@
 
 /**
 * This program finds the shortest path through a graph using dijkstra's shortest path algorithm
-* 4/8/19
+* 4/11/19
 * Nic Breuer
 */
 
@@ -22,57 +23,62 @@ util util_c;
 ifstream myfile;
 
 // READS GRAPH AND BUILDS GRAPH AND ADJ LISTS
-GRAPH inputGraph() {
-	GRAPH G;
-	myfile.open("Ginput.txt");
-	if (myfile.is_open()) {
+void inputGraph(GRAPH &G) {
 
-		int n, m; //verts , edges
-		int u, v, w; //node, neighbor, weight
-		int counter = 1;
+	int n, m; //verts , edges
+	int u, v, w; //node, neighbor, weight
+	int counter = 0;
 
-		myfile >> n; myfile >> m; //reads first line
-		G = graph_c.Initialize(n, m); //creates graph will null ptrs
-		GRAPH tempG = graph_c.Initialize(n, m); //creates temp graph will null ptrs to work on
+	myfile >> n; myfile >> m; //reads first line
+	G = graph_c.Initialize(n, m); //creates temp graph will null ptrs to work on
 
-		while (myfile >> u >> v >> w) { //reads all other lines
-			graph_c.InsertEdge(tempG, u, v, w); //creates elements and adj lists
-			if (counter >= m) {
-				break; //breaks loop early if data lines is greater than # of vert provided
-			}
-			counter++;
-		}
-		myfile.close();
-
-		if (counter < m) { cout << "Error: Data does not match # of verts"; }
-		else { G = tempG; } //error if data is less than # of verts provided
-
+	while (myfile >> u >> v >> w) { //reads all other lines
+		graph_c.InsertEdge(G, u, v, w); //creates elements and adj lists
+		counter++;
+		if (counter >= m) {
+			break; //breaks loop early if data lines is greater than # of vert provided
+		} 
 	}
-	else {
-		cout << "Error: No File";
+
+	if (counter < m) {
+		cout << "\nError: Data does not match # of verts";
+		G = graph_c.Initialize(0, 0);
 	}
-	return G;
 }
 
 void Dijkstra(GRAPH &G) {
 	// get source and destination node value
 
 	int sourceNode = -1; int destination = -1; int flag = -1;
-
+	int error = 0;
 	util_c.DCommand(&sourceNode, &destination, &flag);
-	if (sourceNode == destination || flag < 0 || flag > 1 || sourceNode < 1) {
-		cout << "\nERROR: Enter valid inputs\n";
+	if (flag < 0 || flag > 1) {
+		cout << "\nERROR: Invalid flag value.\n";
+		error = 1;
+	}
+	if (sourceNode < 1 || sourceNode > G.v || destination < 0 || destination > G.v) {
+		cout << "\nERROR: One or more of the nodes is invalid.\n";
+		error = 1;
+	}
+	if (error) {
 		return;
 	}
-	else if (sourceNode > G.v || destination < 0 || destination > G.v) {
-		cout << "\nERROR: Enter valid inputs\n";
-		return;
-	}
+
 	cout << " - Run Dijkstra's Alg";
+
+	if (sourceNode == destination) {
+		if (flag == 0) {
+			cout << "\nLength: 0";
+		}
+		else {
+			cout << "\nPATH: " << sourceNode;
+		}
+		return;
+	}
 
 	// ---------STEP 1--------
 	// CREATE MIN HEAP (USING DISTANCE AS THE VALUE) OF SIZE v AND INIT SOURCE d TO 0
-	G = inputGraph();
+	inputGraph(G);
 	HEAP tempHeap = heap_c.Initialize(G, sourceNode);
 
 	// ---------STEP 2--------
@@ -125,14 +131,26 @@ void Dijkstra(GRAPH &G) {
 	else {
 		cout << "\n";
 		if (tempElement.d == 999) {
-			cout << "No path available";
+			cout << "No path available from " << sourceNode << " to " << destination;
 		}
 		else {
+			
+			string s = "";
+			cout << "PATH: " << sourceNode;
 			while (tempElement.node != sourceNode) {
-				cout << tempElement.node << " <- ";
+				int i = tempElement.node;
+				string newS;
+				stringstream out;
+				out << i;
+				newS = out.str();
+
+				s = ", " + newS + s;
+				//cout << tempElement.node << " <- ";
 				tempElement = G.H[tempElement.p];
 			}
-			cout << sourceNode;
+			cout << s;
+			
+
 		}
 	}
 }
@@ -146,7 +164,7 @@ void Relax(ELEMENT u, ELEMENT &v, int w) {
 
 
 int main(){
-	GRAPH mygraph;
+	GRAPH mygraph = graph_c.Initialize(0,0);
 	HEAP myheap;
 	
 	while (1) {
@@ -161,28 +179,36 @@ int main(){
 		// EXECUTE COMMAND
 		switch (c) {
 		case 'e': //stop
-			cout << "exit case" << endl;
+			cout << " - exit case" << endl;
 			exit(0);
 
 		case 'i': //input graph
 			//TODO pointer stuff
 			cout << " - Input graph";
-			mygraph = inputGraph();
+			myfile.open("Ginput.txt");
+			if (myfile.is_open()) {
+				inputGraph(mygraph);
+			}
+			else {
+				cout << "\nError: There was a problem opening file Ginput.txt for reading.";
+			}
+			myfile.close();
 			break;
 			
 
 		case 'w': //write graph
 			cout << " - Write graph";
-			if (mygraph.v >= 0) {
-				graph_c.PrintGraph(mygraph);
-			}
-			else {
-				cout << "\nERROR: no graph exists.";
-			}
+			if (mygraph.v != 0) { graph_c.PrintGraph(mygraph); }
+			else { cout << "\nERROR: no graph exists."; }
 			break;
 
 		case 'c': //run shortest path alg
-			Dijkstra(mygraph);
+			if (mygraph.v != 0) { 
+				myfile.open("Ginput.txt");
+				Dijkstra(mygraph); 
+				myfile.close();
+			}
+			else { cout << "\nERROR: no graph exists."; }
 			break;
 
 		default:

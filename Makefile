@@ -1,4 +1,4 @@
-EXEC = run
+EXEC = proj2
 CC = g++
 CFLAGS = -c -Wall
 
